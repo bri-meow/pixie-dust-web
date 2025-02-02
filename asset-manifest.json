@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/pixie-dust-web/static/css/main.f855e6bc.css",
-    "main.js": "/pixie-dust-web/static/js/main.c6a42ec9.js",
+    "main.js": "/pixie-dust-web/static/js/main.43421500.js",
     "static/js/453.0623ba2b.chunk.js": "/pixie-dust-web/static/js/453.0623ba2b.chunk.js",
     "index.html": "/pixie-dust-web/index.html",
     "main.f855e6bc.css.map": "/pixie-dust-web/static/css/main.f855e6bc.css.map",
-    "main.c6a42ec9.js.map": "/pixie-dust-web/static/js/main.c6a42ec9.js.map",
+    "main.43421500.js.map": "/pixie-dust-web/static/js/main.43421500.js.map",
     "453.0623ba2b.chunk.js.map": "/pixie-dust-web/static/js/453.0623ba2b.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.f855e6bc.css",
-    "static/js/main.c6a42ec9.js"
+    "static/js/main.43421500.js"
   ]
 }
