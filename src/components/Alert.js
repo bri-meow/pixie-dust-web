@@ -1,13 +1,13 @@
-import React, { useState, useContext } from "react";
+import React, { useEffect, useState, useContext } from "react";
 
 import { db } from "../firebase";
 import {
   collection,
   addDoc,
-  getDocs,
   deleteDoc,
   updateDoc,
   doc,
+  onSnapshot,
 } from "firebase/firestore";
 
 import moment from "moment";
@@ -19,6 +19,7 @@ import {
   Stack,
   FormControl,
   InputLabel,
+  Icon,
   IconButton,
   Select,
   Table,
@@ -31,7 +32,8 @@ import {
   MenuItem,
   Typography,
 } from "@mui/material";
-import { Delete, EmojiEvents } from "@mui/icons-material";
+import { Delete, EmojiEvents, NotificationsActive } from "@mui/icons-material";
+import { grey } from "@mui/material/colors";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -40,6 +42,19 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 
 import "../App.css";
 import { AuthContext } from "../AuthContext";
+
+const getIcon = (park) => {
+  switch (park) {
+    case "Both":
+      return <BothParksIcon />;
+    case "DL":
+      return <DisneylandIcon />;
+    case "DCA":
+      return <CaliforniaAdventureIcon />;
+    default:
+      return "oops";
+  }
+};
 
 const Alert = () => {
   const { user, logout } = useContext(AuthContext);
@@ -72,7 +87,6 @@ const Alert = () => {
       console.log("Document written with ID: ", docRef.id);
       setPark("Both");
       setDate(defaultDate);
-      //fetchPost();
     } catch (e) {
       console.error("Error adding document: ", e);
     }
@@ -82,7 +96,6 @@ const Alert = () => {
     try {
       await deleteDoc(doc(db, "test-alerts", documentId));
       console.log("Document successfully deleted!");
-      fetchPost();
     } catch (e) {
       console.error("Error deleting document: ", e);
     }
@@ -104,23 +117,26 @@ const Alert = () => {
       });
 
       console.log("Document updated successfully!");
-      fetchPost();
     } catch (error) {
       console.error("Error updating document: ", error);
     }
   };
 
-  const fetchPost = async () => {
-    await getDocs(collection(db, "test-alerts")).then((querySnapshot) => {
-      const newData = querySnapshot.docs.map((doc) => ({
-        ...doc.data(),
-        id: doc.id,
-      }));
-      setAlerts(newData);
-    });
-  };
+  useEffect(() => {
+    const unsubscribe = onSnapshot(
+      collection(db, "test-alerts"),
+      (querySnapshot) => {
+        //console.log("fetching data");
+        const newData = querySnapshot.docs.map((doc) => ({
+          ...doc.data(),
+          id: doc.id,
+        }));
+        setAlerts(newData);
+      }
+    );
 
-  fetchPost();
+    return () => unsubscribe(); // Unsubscribe when component unmounts
+  }, []);
 
   return (
     <Box py={2} px={{ xs: 0.5, sm: 2 }}>
@@ -178,18 +194,25 @@ const Alert = () => {
 
       <Box py={4} px={{ xs: 0, sm: 4 }}>
         <TableContainer component={Paper}>
-          <Table {...(isSmall ? { size: "small" } : {})}>
+          <Table
+            {...(isSmall ? { size: "small" } : {})}
+            padding="normal"
+            sx={{ padding: 30 }}
+          >
             <TableHead>
               <TableRow>
                 <TableCell>Park</TableCell>
-                <TableCell align="right">Day</TableCell>
-                <TableCell align="right">Date</TableCell>
-                <TableCell align="right">User</TableCell>
-                {!isSmall && <TableCell align="right">CreatedAt</TableCell>}
-                {!isSmall && <TableCell align="right">LastSeenAt</TableCell>}
-                {!isSmall && (
-                  <TableCell align="right">NotificationCount</TableCell>
-                )}
+                <TableCell align="left">Day</TableCell>
+                <TableCell align="left">Date</TableCell>
+                <TableCell align="center">
+                  <NotificationsActive
+                    fontSize="small"
+                    sx={{ color: grey[600], verticalAlign: "top" }}
+                  />
+                </TableCell>
+                {!isSmall && <TableCell align="left">CreatedAt</TableCell>}
+                <TableCell align="left">Last</TableCell>
+                {!isSmall && <TableCell align="left">Count</TableCell>}
                 <TableCell align="right">Actions</TableCell>
               </TableRow>
             </TableHead>
@@ -200,29 +223,33 @@ const Alert = () => {
                   key={i}
                   sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                 >
-                  <TableCell align="right">{alert.park}</TableCell>
-                  <TableCell align="right">
-                    {moment(alert.date).format("dddd").substring(0, 3)}
+                  <TableCell align="left">{getIcon(alert.park)}</TableCell>
+                  <TableCell align="left">
+                    {moment(alert.date).format("dddd").substring(0, 2)}
                   </TableCell>
-                  <TableCell align="right">{alert.date}</TableCell>
-                  <TableCell align="right">{alert.user}</TableCell>
+                  <TableCell align="left">
+                    {isSmall ? moment(alert.date).format("M-D") : alert.date}
+                  </TableCell>
+                  <TableCell align="left">{alert.user}</TableCell>
                   {!isSmall && (
-                    <TableCell align="right">
+                    <TableCell align="left">
                       <Typography variant="caption">
                         {moment(alert.createdAt).format("MMM D, h:mm:ss A")}
                       </Typography>
                     </TableCell>
                   )}
+                  <TableCell align="left">
+                    <Typography variant="caption">
+                      {alert.lastFoundAt &&
+                        (isSmall
+                          ? moment(alert.lastFoundAt).format("h:mm")
+                          : moment(alert.lastFoundAt).format(
+                              "MMM D, h:mm:ss A"
+                            ))}
+                    </Typography>
+                  </TableCell>
                   {!isSmall && (
-                    <TableCell align="right">
-                      <Typography variant="caption">
-                        {alert.lastFoundAt &&
-                          moment(alert.lastFoundAt).format("MMM D, h:mm:ss A")}
-                      </Typography>
-                    </TableCell>
-                  )}
-                  {!isSmall && (
-                    <TableCell align="right">
+                    <TableCell align="left">
                       <Typography variant="caption">
                         {alert.notificationCount}
                       </Typography>
@@ -255,6 +282,61 @@ const Alert = () => {
       </Box>
       <Button onClick={logout}>Logout</Button>
     </Box>
+  );
+};
+
+const DisneylandIcon = () => {
+  return (
+    <Icon
+      sx={{
+        fontFamily: "DisneyIcons",
+        boxSizing: "content-box",
+        padding: "3px",
+        fontSize: "1.3rem",
+      }}
+    >
+      <Box component="span" sx={{ color: "#dd1688" }}>
+        
+      </Box>
+    </Icon>
+  );
+};
+
+const CaliforniaAdventureIcon = () => {
+  return (
+    <Icon
+      sx={{
+        fontFamily: "DisneyIcons",
+        boxSizing: "content-box",
+        padding: "3px",
+        fontSize: "1.3rem",
+      }}
+    >
+      <Box component="span" sx={{ color: "#008896" }}>
+        
+      </Box>
+    </Icon>
+  );
+};
+
+const BothParksIcon = () => {
+  return (
+    <Icon
+      sx={{
+        fontFamily: "DisneyIcons",
+        boxSizing: "content-box",
+        padding: "3px",
+        fontSize: "1.3rem",
+        overflow: "visible",
+      }}
+    >
+      <Box component="span" sx={{ marginLeft: "-5px", color: "#008896" }}>
+        
+      </Box>
+      <Box component="span" sx={{ marginLeft: "-15px", color: "#dd1688" }}>
+        
+      </Box>
+    </Icon>
   );
 };
 

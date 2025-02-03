@@ -11,3 +11,8 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
+
+@font-face {
+  font-family: 'DisneyIcons';
+  src: local('DisneyIcons'), url("./fonts/pep_icon_font-webfont.woff2") format('woff2');
+}
