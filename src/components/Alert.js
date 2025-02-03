@@ -152,6 +152,7 @@ const Alert = () => {
             id="park-select"
             value={park}
             label="Park"
+            size="small"
             onChange={(e) => setPark(e.target.value)}
           >
             <MenuItem value={"DL"}>Disneyland</MenuItem>
@@ -167,6 +168,7 @@ const Alert = () => {
             id="notificationUser-select"
             value={notificationUser}
             label="User to Notify"
+            size="small"
             onChange={(e) => setNotificationUser(e.target.value)}
           >
             <MenuItem value={"bri"}>Bri</MenuItem>
@@ -177,6 +179,12 @@ const Alert = () => {
 
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <DatePicker
+            slotProps={{ textField: { size: "small" } }}
+            sx={{
+              "& .MuiInputBase-input": {
+                height: "23px",
+              },
+            }}
             label="Choose Date"
             value={date}
             onChange={(newValue) => setDate(newValue)}
@@ -230,7 +238,7 @@ const Alert = () => {
                   <TableCell align="left">
                     {isSmall ? moment(alert.date).format("M-D") : alert.date}
                   </TableCell>
-                  <TableCell align="left">{alert.user}</TableCell>
+                  <TableCell align="center">{alert.user}</TableCell>
                   {!isSmall && (
                     <TableCell align="left">
                       <Typography variant="caption">
