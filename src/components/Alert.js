@@ -536,7 +536,7 @@ const BothParksIcon = () => {
 
 const AlertDetailsRow = (props) => {
   return (
-    <Stack direction="row" spacing={4} justifyContent="flex-start">
+    <Stack width="100%" direction="row" spacing={3} justifyContent="space-between" alignItems="center">
       {props.children}
     </Stack>
   );
