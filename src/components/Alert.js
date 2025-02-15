@@ -15,6 +15,9 @@ import moment from "moment";
 import "moment-duration-format";
 
 import {
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
   Box,
   Button,
   Chip,
@@ -40,6 +43,7 @@ import {
 } from "@mui/material";
 import {
   Delete,
+  ExpandMore,
   PlayCircle,
   MenuBookTwoTone,
   NotificationsActive,
@@ -483,7 +487,26 @@ const Alert = () => {
           </Table>
         </TableContainer>
       </Box>
+      <Box>
+        <Accordion>
+          <AccordionSummary expandIcon={<ExpandMore />}>
+            Events
+          </AccordionSummary>
+          <AccordionDetails>
+            <iframe
+              title="events"
+              className="frame"
+              src="https://app.amplitude.com/analytics/share/embed/e0465f96-2891-4742-9838-6c7ff153fc7e"
+              frameBorder="0"
+              width="100%"
+              height="600"
+            ></iframe>
+          </AccordionDetails>
+        </Accordion>
+      </Box>
+
       <Button onClick={logout}>Logout</Button>
+
       <Dialog onClose={handleCloseDeleteModal} open={openDeleteModal}>
         <DialogTitle>Are you sure you want to delete this alert?</DialogTitle>
         <DialogContent>
