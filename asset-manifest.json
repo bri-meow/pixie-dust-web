@@ -1,16 +1,16 @@
 {
   "files": {
     "main.css": "/pixie-dust-web/static/css/main.bbc44126.css",
-    "main.js": "/pixie-dust-web/static/js/main.e476f15a.js",
+    "main.js": "/pixie-dust-web/static/js/main.dcd79460.js",
     "static/js/453.0623ba2b.chunk.js": "/pixie-dust-web/static/js/453.0623ba2b.chunk.js",
     "static/media/pep_icon_font-webfont.woff2": "/pixie-dust-web/static/media/pep_icon_font-webfont.db4fd24547bc7413dbf5.woff2",
     "index.html": "/pixie-dust-web/index.html",
     "main.bbc44126.css.map": "/pixie-dust-web/static/css/main.bbc44126.css.map",
-    "main.e476f15a.js.map": "/pixie-dust-web/static/js/main.e476f15a.js.map",
+    "main.dcd79460.js.map": "/pixie-dust-web/static/js/main.dcd79460.js.map",
     "453.0623ba2b.chunk.js.map": "/pixie-dust-web/static/js/453.0623ba2b.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.bbc44126.css",
-    "static/js/main.e476f15a.js"
+    "static/js/main.dcd79460.js"
   ]
 }
