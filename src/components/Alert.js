@@ -52,14 +52,41 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import "../App.css";
 import { AuthContext } from "../AuthContext";
 
-const getIcon = (park) => {
-  switch (park) {
+const iconCharacters = {
+  californiaAdventure: "",
+  disneyLand: "",
+  balloon: String.fromCharCode(0xe39b),
+  chandrilaStarLine: String.fromCharCode(0xe04e),
+};
+
+const getIcon = (iconType) => {
+  switch (iconType) {
     case "Both":
-      return <BothParksIcon />;
+      return (
+        <DoubleDisneyIcon
+          name1="californiaAdventure"
+          color1="#008896"
+          name2="disneyLand"
+          color2="#DD1688"
+        />
+      );
     case "DL":
-      return <DisneylandIcon />;
+      return <DisneyIcon name="disneyLand" color="#DD1688" />;
     case "DCA":
-      return <CaliforniaAdventureIcon />;
+      return <DisneyIcon name="californiaAdventure" color="#008896" />;
+    case "bri":
+      return <DisneyIcon name="balloon" color="#6056A3" />;
+    case "ian":
+      return <DisneyIcon name="chandrilaStarLine" color="#f38482" />;
+    case "both":
+      return (
+        <DoubleDisneyIcon
+          name1="balloon"
+          color1="#6056A3"
+          name2="chandrilaStarLine"
+          color2="#f38482"
+        />
+      );
     default:
       return "oops";
   }
@@ -233,9 +260,36 @@ const Alert = () => {
             sx={{ height: "50px" }}
             onChange={(e) => setNotificationUser(e.target.value)}
           >
-            <MenuItem value={"bri"}>Bri</MenuItem>
-            <MenuItem value={"ian"}>Ian</MenuItem>
-            <MenuItem value={"both"}>Both</MenuItem>
+            <MenuItem value={"bri"}>
+              <Stack
+                direction="row"
+                alignItems="center"
+                justifyContent="flex-start"
+                spacing={2}
+              >
+                {getIcon("bri")} <Typography>Bri</Typography>
+              </Stack>
+            </MenuItem>
+            <MenuItem value={"ian"}>
+              <Stack
+                direction="row"
+                alignItems="center"
+                justifyContent="flex-start"
+                spacing={2}
+              >
+                {getIcon("ian")} <Typography>Ian</Typography>
+              </Stack>
+            </MenuItem>
+            <MenuItem value={"both"}>
+              <Stack
+                direction="row"
+                alignItems="center"
+                justifyContent="flex-start"
+                spacing={2}
+              >
+                {getIcon("both")} <Typography>Both</Typography>
+              </Stack>
+            </MenuItem>
           </Select>
         </FormControl>
 
@@ -275,7 +329,9 @@ const Alert = () => {
           >
             <TableHead>
               <TableRow>
-                <TableCell>Park</TableCell>
+                <TableCell sx={{ paddingLeft: { xs: "3px", sm: "15px" } }}>
+                  Park
+                </TableCell>
                 <TableCell align="left">Day</TableCell>
                 <TableCell align="left">Date</TableCell>
                 <TableCell align="center">
@@ -297,7 +353,12 @@ const Alert = () => {
                   key={i}
                   sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                 >
-                  <TableCell align="left">{getIcon(alert.park)}</TableCell>
+                  <TableCell
+                    align="left"
+                    sx={{ paddingLeft: { xs: "3px", sm: "15px" } }}
+                  >
+                    {getIcon(alert.park)}
+                  </TableCell>
                   <TableCell align="left">
                     {moment(alert.date).format("dddd").substring(0, 2)}
                   </TableCell>
@@ -305,9 +366,19 @@ const Alert = () => {
                     {isSmall ? moment(alert.date).format("M-D") : alert.date}
                   </TableCell>
                   <TableCell align="center">
-                    {isSmall
-                      ? alert.user.substring(0, 1).toUpperCase()
-                      : alert.user}
+                    <Stack
+                      direction="row"
+                      justifyContent="center"
+                      alignItems="center"
+                      spacing={2}
+                    >
+                      <Box>{getIcon(alert.user)}</Box>
+                      {!isSmall && (
+                        <Box sx={{ textTransform: "capitalize" }}>
+                          {alert.user}
+                        </Box>
+                      )}
+                    </Stack>
                   </TableCell>
                   {!isSmall && (
                     <TableCell align="left">
@@ -434,7 +505,12 @@ const Alert = () => {
             </AlertDetailsRow>
             <AlertDetailsRow>
               <Typography>User:</Typography>
-              <Typography>{alertForDetails?.user}</Typography>
+              <Stack direction="row" alignItems="center" spacing={3}>
+                {getIcon(alertForDetails?.user)}
+                <Typography sx={{ textTransform: "capitalize" }}>
+                  {alertForDetails?.user}
+                </Typography>
+              </Stack>
             </AlertDetailsRow>
             <AlertDetailsRow>
               <Typography>Last Seen:</Typography>
@@ -479,41 +555,29 @@ const Alert = () => {
   );
 };
 
-const DisneylandIcon = () => {
+const DisneyIcon = ({ name, color }) => {
+  const iconCharacter = iconCharacters[name];
   return (
     <Icon
       sx={{
         fontFamily: "DisneyIcons",
         boxSizing: "content-box",
         padding: "3px",
-        fontSize: "1.3rem",
+        fontSize: "1.2rem",
+        height: "unset",
+        width: "1.2rem",
       }}
     >
-      <Box component="span" sx={{ color: "#dd1688" }}>
-        
+      <Box component="span" sx={{ color: color }}>
+        <>{iconCharacter}</>
       </Box>
     </Icon>
   );
 };
 
-const CaliforniaAdventureIcon = () => {
-  return (
-    <Icon
-      sx={{
-        fontFamily: "DisneyIcons",
-        boxSizing: "content-box",
-        padding: "3px",
-        fontSize: "1.3rem",
-      }}
-    >
-      <Box component="span" sx={{ color: "#008896" }}>
-        
-      </Box>
-    </Icon>
-  );
-};
-
-const BothParksIcon = () => {
+const DoubleDisneyIcon = ({ name1, name2, color1, color2 }) => {
+  const iconCharacter1 = iconCharacters[name1];
+  const iconCharacter2 = iconCharacters[name2];
   return (
     <Icon
       sx={{
@@ -522,13 +586,14 @@ const BothParksIcon = () => {
         padding: "3px",
         fontSize: "1.3rem",
         overflow: "visible",
+        height: "unset",
       }}
     >
-      <Box component="span" sx={{ marginLeft: "-5px", color: "#008896" }}>
-        
+      <Box component="span" sx={{ marginLeft: "-5px", color: color1 }}>
+        {iconCharacter1}
       </Box>
-      <Box component="span" sx={{ marginLeft: "-15px", color: "#dd1688" }}>
-        
+      <Box component="span" sx={{ marginLeft: "-15px", color: color2 }}>
+        {iconCharacter2}
       </Box>
     </Icon>
   );
@@ -536,7 +601,13 @@ const BothParksIcon = () => {
 
 const AlertDetailsRow = (props) => {
   return (
-    <Stack width="100%" direction="row" spacing={3} justifyContent="space-between" alignItems="center">
+    <Stack
+      width="100%"
+      direction="row"
+      spacing={3}
+      justifyContent="space-between"
+      alignItems="center"
+    >
       {props.children}
     </Stack>
   );
