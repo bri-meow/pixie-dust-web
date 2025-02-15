@@ -77,14 +77,14 @@ const getIcon = (iconType) => {
     case "bri":
       return <DisneyIcon name="balloon" color="#6056A3" />;
     case "ian":
-      return <DisneyIcon name="chandrilaStarLine" color="#f38482" />;
+      return <DisneyIcon name="chandrilaStarLine" color="#F96302" />;
     case "both":
       return (
         <DoubleDisneyIcon
           name1="balloon"
           color1="#6056A3"
           name2="chandrilaStarLine"
-          color2="#f38482"
+          color2="#F96302"
         />
       );
     default:
