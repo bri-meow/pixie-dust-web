@@ -10,7 +10,9 @@ import {
   onSnapshot,
 } from "firebase/firestore";
 
+import chroma from "chroma-js";
 import moment from "moment";
+import "moment-duration-format";
 
 import {
   Box,
@@ -171,6 +173,37 @@ const Alert = () => {
       console.error("Error updating document: ", error);
     }
   };
+
+  const getColor = (lastSeen) => {
+    const timeAgo = moment.duration(moment().diff(moment(lastSeen)));
+    const timeAgoSeconds = timeAgo.asSeconds();
+    // upper limit in Days
+    const upperLimitDays = 6;
+    const upperLimit = upperLimitDays * 24 * 60 * 60;
+    const percentage = Math.min(timeAgoSeconds, upperLimit) / upperLimit;
+    const f = chroma.scale(["#6ea094", "#f18a81", "#d95a79"]).mode("lab");
+    return f(percentage).toString();
+  };
+
+  function formatDurationWithPrecision(lastSeen) {
+    const duration = moment.duration(moment().diff(moment(lastSeen)));
+    const milliseconds = duration.asMilliseconds();
+    if (milliseconds >= 604800000) {
+      // 1 week or more
+      return duration.format("w [w]", 1);
+    } else if (milliseconds >= 86400000) {
+      // 24 hours or more
+      return duration.format("d [d]", 1);
+    } else if (milliseconds >= 3600000) {
+      // 1 hour or more
+      return duration.format("h [h]", 1);
+    } else if (milliseconds >= 60000) {
+      // 1 minute or more
+      return duration.format("m [m]");
+    } else {
+      return duration.format("s [s]");
+    }
+  }
 
   useEffect(() => {
     const unsubscribe = onSnapshot(
@@ -391,16 +424,16 @@ const Alert = () => {
                     align="left"
                     sx={{ paddingLeft: "4px", paddingRight: "0" }}
                   >
-                    <Typography variant="caption">
-                      {alert.lastFoundAt &&
-                        (isSmall ? (
-                          <Typography sx={{ fontSize: "0.7rem" }}>
-                            {moment(alert.lastFoundAt).format("h:mm A")}
-                          </Typography>
-                        ) : (
-                          moment(alert.lastFoundAt).format("MMM D, h:mm:ss A")
-                        ))}
-                    </Typography>
+                    {alert.lastFoundAt && (
+                      <Chip
+                        size="small"
+                        label={formatDurationWithPrecision(alert.lastFoundAt)}
+                        style={{
+                          color: "white",
+                          backgroundColor: getColor(alert.lastFoundAt),
+                        }}
+                      />
+                    )}
                   </TableCell>
                   {!isSmall && (
                     <TableCell align="left">
